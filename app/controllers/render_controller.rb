@@ -1,0 +1,2 @@
+class RenderController < ApplicationController
+end

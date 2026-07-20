@@ -1,0 +1,86 @@
+%h1 ここがrender#showです
+
+
+
+= form_with data: { controller: "thaqqa" } do |f|
+    .mb-3
+        .col-3
+            %fieldset.border.rounded.p-3
+                %legend.float-none.px-2 自動更新
+                .form-check
+                    = f.check_box :autoupdate, class: "form-check-input", data: {action: "input->thaqqa#auto_update", thaqqa_target: "autoupdate"}
+                    = f.label :autoupdate, class: "form-check-label"
+    .row.mb-3
+        .col-4
+            = f.label :sentence
+            = f.text_area :sentence, value: "khehyelughunuy nehthvnu", rows: 5, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "sentence"}
+        .col-7 
+            %fieldset.border.rounded.p-1
+                %svg{data:{thaqqa_target: "rendersvg"}}
+                    %path{data:{thaqqa_target: "renderpath"}}
+
+    .row.mb-3
+        .col-2
+            = f.label :width
+            = f.number_field :width, value: 150, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "width"}
+        .col-2
+            = f.label :height
+            = f.number_field :height, value: 150, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "height"}
+        .col-2
+            = f.label :fontsize
+            = f.number_field :fontsize, value: 16, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "fontsize"}
+        .col-2
+            = f.label :language
+            = f.select :language,[["東果語","khehyelu"], ["汽陸語","samlhta"]], {},
+                class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "language"}
+    .row.mb-3
+        .col-2
+            %fieldset.border.rounded.p-2
+                %legend.float-none.fs-6 書記方向
+                = f.radio_button :direction, "vertical", checked: true, data: {action: "input->thaqqa#auto_update", thaqqa_target: "direction"}
+                = f.label :direction_vertical, "縦"
+
+                = f.radio_button :direction, "horizontal", data: {action: "input->thaqqa#auto_update", thaqqa_target: "direction"}
+                = f.label :direction_horizontal, "横"
+        .col-2
+            = f.label :bundleowner
+            = f.text_field :bundleowner, value: "asagikaki", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "bundleowner"}
+        .col-2
+            = f.label :bundlename
+            = f.text_field :bundlename, value: "Default", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "bundlename"}
+        .col-2
+            = f.label :font
+            = f.text_field :font, value: "Default", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "font"}
+        
+
+
+    #accordionPanelsStayOpenExample.accordion.col-9
+        .accordion-item
+            %h2.accordion-header
+                %button.accordion-button{"aria-controls" => "panelsStayOpen-collapseOne", "aria-expanded" => "true", "data-bs-target" => "#panelsStayOpen-collapseOne", "data-bs-toggle" => "collapse", :type => "button"}
+                    詳細な設定
+            #panelsStayOpen-collapseOne.accordion-collapse.collapse
+                .accordion-body
+                    .row.mb-3
+                        .col-3
+                            = f.label :lineheight
+                            = f.number_field :lineheight, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "lineheight"}
+                        .col-3
+                            = f.label :wordspacing
+                            = f.number_field :wordspacing, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "wordspacing"}
+                        .col-3
+                            = f.label :letterspacing
+                            = f.number_field :letterspacing, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "letterspacing"}
+                    .row.mb-3 
+                        .col.3 
+                            = f.label :linebreak
+                            = f.select :linebreak,[["通常","normal"], ["強制改行","break_word"]], {},
+                                class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "linebreak"}
+                        .col.3 
+                            = f.label :textalign
+                            = f.select :textalign,[["文頭基準","start"], ["文末基準","end"],["中央基準","center"],["一文づつ埋める","justify"]], {},
+                                class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "textalign"}
+                        .col.3 
+                            = f.label :textalignlast
+                            = f.select :textalignlast,[["文頭基準","start"], ["文末基準","end"],["中央基準","center"],["一文づつ埋める","justify"]], {},
+                                class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "textalignlast"}
