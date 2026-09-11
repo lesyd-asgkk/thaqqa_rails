@@ -1,0 +1,34 @@
+ja:
+  thaqqa:
+    render:
+      show:
+        autoupdate_config: "自動更新"
+        autoupdate: "自動更新"
+
+        textbox: "ここに文字を入力"
+        render_result: "描画結果"
+
+        width: "描画領域幅"
+        height: "描画領域高"
+        fontsize: "フォントサイズ"
+
+        language: "言語設定"
+        lang:
+          khehyelu: "東果語"
+          samlhta: "汽陸語"
+        
+        direction: "書記方向"
+        dir:
+          vertical: "縦"
+          horizontal: "横"
+
+        bundleowner: "バンドル保持者"
+        bundlename: "フォントバンドル名"
+        fontname: "フォント名"
+
+        line_height: "行間の幅"
+        word_spacing: "単語間の幅"
+        letter_spacing: "文字間幅"
+        line_break: "改行設定"
+        text_align: "行寄せ設定"
+        text_align_last: "最終行の寄せ設定"

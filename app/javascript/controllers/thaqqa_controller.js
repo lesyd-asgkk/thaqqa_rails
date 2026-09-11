@@ -12,7 +12,7 @@ export default class extends Controller {
     ]
 
   connect() { this.update_letter() }
-  auto_update(){ if(this.autoupdateTarget.value){ setTimeout(() => {this.update_letter()},500) } }
+  auto_update(){ if(this.autoupdateTarget.checked){ setTimeout(() => {this.update_letter()},500) } }
   manual_update(){ this.update_letter()} 
 
   async update_letter(){

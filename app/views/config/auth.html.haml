@@ -1,0 +1,7 @@
+%h1 ここがconfig#loginです
+%h2 ログイン画面代わりになる予定なのです
+
+= form_with url: config_login_path, method: :post do |f|
+    = f.label :token
+    = f.text_field :text, value: "", class: "form-control"
+    = f.submit "ログイン", class: "btn btn-primary"

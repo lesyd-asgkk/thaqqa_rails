@@ -6,50 +6,54 @@
     .mb-3
         .col-3
             %fieldset.border.rounded.p-3
-                %legend.float-none.px-2 自動更新
+                %legend.float-none.px-2 
+                    = t("thaqqa.render.show.autoupdate_config")
                 .form-check
-                    = f.check_box :autoupdate, class: "form-check-input", data: {action: "input->thaqqa#auto_update", thaqqa_target: "autoupdate"}
-                    = f.label :autoupdate, class: "form-check-label"
+                    = f.check_box :autoupdate , class: "form-check-input", checked: true, data: {action: "input->thaqqa#auto_update", thaqqa_target: "autoupdate"}
+                    = f.label :autoupdate, t("thaqqa.render.show.autoupdate") , class: "form-check-label"
     .row.mb-3
         .col-4
-            = f.label :sentence
+            = f.label :sentence, t("thaqqa.render.show.textbox") 
             = f.text_area :sentence, value: "khehyelughunuy nehthvnu", rows: 5, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "sentence"}
         .col-7 
             %fieldset.border.rounded.p-1
+                %legend.float-none.fs-6 
+                    = t("thaqqa.render.show.render_result") 
                 %svg{data:{thaqqa_target: "rendersvg"}}
                     %path{data:{thaqqa_target: "renderpath"}}
 
     .row.mb-3
         .col-2
-            = f.label :width
+            = f.label :width, t("thaqqa.render.show.width") 
             = f.number_field :width, value: 150, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "width"}
         .col-2
-            = f.label :height
+            = f.label :height, t("thaqqa.render.show.height") 
             = f.number_field :height, value: 150, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "height"}
         .col-2
-            = f.label :fontsize
+            = f.label :fontsize, t("thaqqa.render.show.fontsize") 
             = f.number_field :fontsize, value: 16, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "fontsize"}
         .col-2
-            = f.label :language
-            = f.select :language,[["東果語","khehyelu"], ["汽陸語","samlhta"]], {},
+            = f.label :language,t("thaqqa.render.show.language") 
+            = f.select :language,[[ t("thaqqa.render.show.lang.khehyelu")  ,"khehyelu"], [ t("thaqqa.render.show.lang.samlhta") ,"samlhta"]], {},
                 class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "language"}
     .row.mb-3
         .col-2
             %fieldset.border.rounded.p-2
-                %legend.float-none.fs-6 書記方向
+                %legend.float-none.fs-6 
+                    = t("thaqqa.render.show.direction") 
                 = f.radio_button :direction, "vertical", checked: true, data: {action: "input->thaqqa#auto_update", thaqqa_target: "direction"}
-                = f.label :direction_vertical, "縦"
+                = f.label :direction_vertical, t("thaqqa.render.show.dir.vertical") 
 
                 = f.radio_button :direction, "horizontal", data: {action: "input->thaqqa#auto_update", thaqqa_target: "direction"}
-                = f.label :direction_horizontal, "横"
+                = f.label :direction_horizontal, t("thaqqa.render.show.dir.horizontal") 
         .col-2
-            = f.label :bundleowner
+            = f.label :bundleowner, t("thaqqa.render.show.bundleowner") 
             = f.text_field :bundleowner, value: "asagikaki", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "bundleowner"}
         .col-2
-            = f.label :bundlename
+            = f.label :bundlename, t("thaqqa.render.show.bundlename") 
             = f.text_field :bundlename, value: "Default", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "bundlename"}
         .col-2
-            = f.label :font
+            = f.label :font, t("thaqqa.render.show.fontname") 
             = f.text_field :font, value: "Default", class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "font"}
         
 
@@ -63,24 +67,24 @@
                 .accordion-body
                     .row.mb-3
                         .col-3
-                            = f.label :lineheight
+                            = f.label :lineheight, t("thaqqa.render.show.line_height") 
                             = f.number_field :lineheight, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "lineheight"}
                         .col-3
-                            = f.label :wordspacing
+                            = f.label :wordspacing, t("thaqqa.render.show.word_spacing") 
                             = f.number_field :wordspacing, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "wordspacing"}
                         .col-3
-                            = f.label :letterspacing
+                            = f.label :letterspacing, t("thaqqa.render.show.letter_spacing") 
                             = f.number_field :letterspacing, value: 0, class: "form-control", data: {action: "input->thaqqa#auto_update", thaqqa_target: "letterspacing"}
                     .row.mb-3 
                         .col.3 
-                            = f.label :linebreak
+                            = f.label :linebreak, t("thaqqa.render.show.line_break") 
                             = f.select :linebreak,[["通常","normal"], ["強制改行","break_word"]], {},
                                 class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "linebreak"}
                         .col.3 
-                            = f.label :textalign
+                            = f.label :textalign,  t("thaqqa.render.show.text_align") 
                             = f.select :textalign,[["文頭基準","start"], ["文末基準","end"],["中央基準","center"],["一文づつ埋める","justify"]], {},
                                 class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "textalign"}
                         .col.3 
-                            = f.label :textalignlast
+                            = f.label :textalignlast,  t("thaqqa.render.show.text_align_last") 
                             = f.select :textalignlast,[["文頭基準","start"], ["文末基準","end"],["中央基準","center"],["一文づつ埋める","justify"]], {},
                                 class: "form-select", data: {action: "input->thaqqa#auto_update", thaqqa_target: "textalignlast"}

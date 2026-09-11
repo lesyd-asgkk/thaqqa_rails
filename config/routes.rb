@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   root "home#show"
   get "/render" , to: "render#show", as: :render
   post "/thaqqa_api/render", to: "thaqqa_api#render_svg"
+
+  get "/config", to: "config#show"
+  get "/config/auth", to: "config#auth"
+  post "/config/login", to: "config#login"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
