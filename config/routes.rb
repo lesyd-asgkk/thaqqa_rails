@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get "/config", to: "config#show"
   get "/config/auth", to: "config#auth"
   post "/config/login", to: "config#login"
+  post "/config/logout", to: "config#logout"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

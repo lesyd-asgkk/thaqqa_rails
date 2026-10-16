@@ -1,0 +1,3 @@
+- flash.each do |type, message|
+  .alert{ class: "alert-#{type == 'notice' ? 'success' : type == 'alert' ? 'danger' : type}", role: "alert", data: { auto_dismiss: true } }
+    = message

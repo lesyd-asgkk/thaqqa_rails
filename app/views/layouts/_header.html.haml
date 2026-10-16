@@ -1,0 +1,15 @@
+%header
+  %nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+    .container
+      = link_to "Thaqqa", root_path, class: "navbar-brand"
+
+      .navbar-nav
+        = link_to "Config", config_path, class: "nav-link"
+
+        - if cookies.encrypted[:thaqqa_token].present?
+          = button_to "ログアウト", config_logout_path,
+            method: :post,
+            class: "nav-link",
+            form: { class: "d-inline" }
+        - else
+          = link_to "ログイン", config_auth_path, class: "nav-link"

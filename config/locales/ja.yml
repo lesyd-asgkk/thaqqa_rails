@@ -12,13 +12,13 @@ ja:
         height: "描画領域高"
         fontsize: "フォントサイズ"
 
-        language: "言語設定"
-        lang:
+        language: 
+          label: "言語設定"
           khehyelu: "東果語"
           samlhta: "汽陸語"
         
-        direction: "書記方向"
-        dir:
+        direction: 
+          label: "書記方向"
           vertical: "縦"
           horizontal: "横"
 
@@ -29,6 +29,15 @@ ja:
         line_height: "行間の幅"
         word_spacing: "単語間の幅"
         letter_spacing: "文字間幅"
-        line_break: "改行設定"
-        text_align: "行寄せ設定"
-        text_align_last: "最終行の寄せ設定"
+        line_break: 
+          label: "改行設定"
+          normal: "通常"
+          break_word: 強制改行
+
+        text_align:
+          label: "行寄せ設定"
+          label_last: "最終行の寄せ設定"
+          start: "文頭基準"
+          center: "中央基準"
+          end: "文末基準"
+          justify: "一文づつ埋める"
