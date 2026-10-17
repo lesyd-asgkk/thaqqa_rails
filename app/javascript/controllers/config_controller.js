@@ -243,20 +243,17 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
     deleteButton.className = "btn btn-outline-danger btn-sm"
     deleteButton.textContent = "削除"
 
-    deleteButton.addEventListener("click", () => {
-        if (confirm("本当に削除しますか？")) { this.delete_row(rowData.ID) }
-      
-    })
+    deleteButton.addEventListener("click", () => { if (confirm("本当に削除しますか？")) { this.delete_row(rowData.ID) } })
 
     const prevRow = rows[index - 1]
     const isBoundary =
-      index == 0 ||
+    index == 0 ||
       (
-        rowData.Order !== prevRow.Order ||
-        rowData.Priority !== prevRow.Priority
+        rowData.Order == null || rowData.Order !== prevRow.Order ||
+        rowData.Priority == null || rowData.Priority !== prevRow.Priority
       )
 
-    if (isBoundary) {
+    if (isBoundary && (index != 0 || rows.length == 1)) {
     const addButton = document.createElement("button")
 
     addButton.type = "button"
@@ -268,7 +265,8 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
     addWrapper.appendChild(addButton)
     }
     operationCell.appendChild(addWrapper)
-    deleteWrapper.appendChild(deleteButton)
+    if(rows.length != 1){ deleteWrapper.appendChild(deleteButton) }
+    
     operationCell.appendChild(deleteWrapper)
 
     tr.appendChild(operationCell)
@@ -296,10 +294,9 @@ add_row(insertIndex) {
       return (a.Order ?? a.ID) - (b.Order ?? b.ID)
     })
 
-  const nextId = rows.reduce(
-    (max, [, row]) => Math.max(max, Number(row.ID) || 0),
-    -1
-  ) + 1
+    const usedIds = new Set(rows.map(([, row]) => Number(row.ID)))
+    let nextId = 0
+    while (usedIds.has(nextId)) {nextId++}
 
   const newRow = {}
 
@@ -321,8 +318,6 @@ add_row(insertIndex) {
     }
   }
 
-if (order != null) { newRow.Order = order}
-if (priority != null) { newRow.Priority = priority }
 
 
   // ID列を設定
