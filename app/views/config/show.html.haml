@@ -1,2 +1,38 @@
 %h1 config#show
 %h2 ここがedit,new,deleteも兼ねます
+
+%div{ data: { controller: "config" } }
+    = form_with url: "#", method: :get do |f|
+        .row.mb-3
+            .col-2
+                = f.label :bundleowner, t("thaqqa.render.show.bundleowner") 
+                = f.text_field :bundleowner, value: "asagikaki", class: "form-control", data: {action: "input->config#get_prefab", config_target: "bundleowner"}
+            .col-2
+                = f.label :bundlename, t("thaqqa.render.show.bundlename") 
+                = f.text_field :bundlename, value: "Default", class: "form-control", data: {action: "input->config#get_prefab", config_target: "bundlename"}
+            .col-2
+                = f.label :font, t("thaqqa.render.show.fontname") 
+                = f.text_field :font, value: "Default", class: "form-control", data: {action: "input->config#get_prefab", config_target: "font"}
+
+    .row.mb-3
+        .col-4
+            %label{ for: "table-select" } 編集するテーブル
+            %select.form-select{
+                id: "table-select",
+                data: {
+                    config_target: "tableSelect",
+                    action: "change->config#change_table"
+                }
+            }
+
+    .table-responsive
+        %table.table.table-bordered.table-sm
+            %thead{ data: { config_target: "tablehead" } }
+            %tbody{ data: { config_target: "tablebody" } }
+
+    .mt-3.d-flex.gap-2
+        %button.btn.btn-success{
+            type: "button",
+            data: { action: "click->config#save" }
+        }
+            変更を保存

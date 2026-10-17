@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "home#show"
   get "/render" , to: "render#show", as: :render
   post "/thaqqa_api/render", to: "thaqqa_api#render_svg"
+  post "/thaqqa_api/get_prefab", to: "thaqqa_api#get_prefab"
 
   get "/config", to: "config#show"
   get "/config/auth", to: "config#auth"

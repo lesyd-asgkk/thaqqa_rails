@@ -9,3 +9,6 @@ application.register("hello", HelloController)
 
 import ThaqqaController from "./thaqqa_controller"
 application.register("thaqqa", ThaqqaController)
+
+import ConfigController from "./config_controller"
+application.register("config", ConfigController)
