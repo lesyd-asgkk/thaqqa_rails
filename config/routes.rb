@@ -2,8 +2,11 @@ Rails.application.routes.draw do
   root "home#show"
   get "/render" , to: "render#show", as: :render
   post "/thaqqa_api/render", to: "thaqqa_api#render_svg"
-  post "/thaqqa_api/get_prefab", to: "thaqqa_api#get_prefab"
-
+  post "/thaqqa_api/prefab/get", to: "thaqqa_api#get_prefab"
+  post "/thaqqa_api/prefab/data/edit", to: "thaqqa_api#update_prefab"
+  post "/thaqqa_api/prefab/data/new", to: "thaqqa_api#add_data_into_prefab"
+  post "/thaqqa_api/prefab/data/delete", to: "thaqqa_api#delete_data_from_prefab"
+  
   get "/config", to: "config#show"
   get "/config/auth", to: "config#auth"
   post "/config/login", to: "config#login"

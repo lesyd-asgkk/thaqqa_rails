@@ -1,25 +1,36 @@
 import { Controller } from "@hotwired/stimulus"
 const READ_ONLY_SUBTYPES = new Set(["id", "path", "regex"])
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
 
 export default class extends Controller {
     static targets = ["bundleowner", "bundlename","font",  //bundle_owner,bundle_name,fontについては後々リスト表示できるようにする
     "tablehead","tablebody", "tableSelect",]
     
-    connect() {     
+    async connect() {     
+        try{
         this.tables = {}
         this.currentTableName = null
-        this.get_prefab() 
+        const json = await this.get_prefab() 
+        this.parse_json(json,true)
+
+        const firstTable = Object.keys(this.tables)[0]
+
+        if (firstTable) {
+            this.currentTableName = firstTable
+            this.tableSelectTarget.value = firstTable
+            this.render(this.tables[firstTable])
+        }
+
+        } catch(error){
+            console.error(error)
+        }
     }
-    async add_content() {}
-    async remove_content() {}
 
   async get_prefab() {
-  const csrfToken = document.querySelector(
-    'meta[name="csrf-token"]'
-  )?.content
+  
 
   try {
-    const res = await fetch("/thaqqa_api/get_prefab", {
+    const res = await fetch("/thaqqa_api/prefab/get", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,12 +49,16 @@ export default class extends Controller {
     const json = await res.json()
 
     if (!json.ok) {
-      console.error(json.error)
-      return
+        throw new Error(`Prefabの取得に失敗しました:${json.error}`)
+    }
+    return json
+    } catch (error) {
+    return error
+  }
     }
 
-    // ここは実際の API レスポンスに合わせる
-    const prefab = json.ok.prefab
+  parse_json(json_raw,init){
+    const prefab = json_raw.ok.prefab
     const staticTables = prefab.static_tables
 
     const fontTables = prefab.fonts[this.fontTarget.value].table_list
@@ -56,7 +71,8 @@ export default class extends Controller {
 
     this.tables = {...structuredClone(filteredStaticTables),...structuredClone(fontTables),}
 
-    this.tableSelectTarget.replaceChildren()
+    if(init){
+          this.tableSelectTarget.replaceChildren()
 
     for (const name of Object.keys(this.tables)) {
       const option = document.createElement("option")
@@ -65,26 +81,18 @@ export default class extends Controller {
       this.tableSelectTarget.appendChild(option)
     }
 
-    const firstTable = Object.keys(this.tables)[0]
-
-    if (firstTable) {
-      this.currentTableName = firstTable
-      this.tableSelectTarget.value = firstTable
-      this.render(this.tables[firstTable])
     }
-  } catch (error) {
-    console.error("Prefabの取得に失敗しました:", error)
-  }
-}
+  } 
+
 
   change_table(event) {
     this.currentTableName = event.target.value
-    this.render(this.tables[this.currentTableName])
+    this.render(this.tables[this.currentTableName],false)
   }
 render(data) {
     const isSingle = data.single === true
-  const columns = Object.values(data.columnList)
-    .sort((a, b) => a.order - b.order)
+    const columns = Object.values(data.columnList)
+        .sort((a, b) => a.order - b.order)
 
 const rows = Object.values(data.dataList)
   .sort((a, b) => {
@@ -157,7 +165,9 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
   input.disabled = readOnly
 
   if (!readOnly) {
-    input.addEventListener("change", (event) => { rowData[column.name] = event.target.value})
+    input.addEventListener("change", async (event) => { rowData[column.name] = event.target.value;
+      await this.edit_row(rowData);
+    })
   }
 
   td.appendChild(input)
@@ -170,8 +180,9 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
     input.disabled = readOnly
 
     if (!readOnly) {
-      input.addEventListener("change", (event) => {
-        rowData[column.name] = event.target.checked
+      input.addEventListener("change", async (event) => {
+        rowData[column.name] = event.target.checked;
+        await this.edit_row(rowData)
       })
     }
 
@@ -191,9 +202,13 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
   }
 
   if (!readOnly) {
-    input.addEventListener("input", 
-        (event) => { const value = event.target.value 
-            rowData[column.name] = value === "" ? null : Number(value) })
+    input.addEventListener("change", 
+        async (event) => { const value = event.target.value 
+            rowData[column.name] = value === "" ? null : Number(value);
+          await this.edit_row(rowData);
+        }
+          
+          )
  }
 
   td.appendChild(input)
@@ -212,11 +227,12 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
       input.classList.add("bg-light")
       input.title = `${column.subtype} 型のため編集できません`
     } else {
-      input.addEventListener("input", (event) => {
+      input.addEventListener("change", async (event) => {
         rowData[column.name] = this.parseValue(
           event.target.value,
           column
-        )
+        );
+        await this.edit_row(rowData);
       })
     }
 
@@ -243,7 +259,7 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
     deleteButton.className = "btn btn-outline-danger btn-sm"
     deleteButton.textContent = "削除"
 
-    deleteButton.addEventListener("click", () => { if (confirm("本当に削除しますか？")) { this.delete_row(rowData.ID) } })
+    deleteButton.addEventListener("click", async () => { if (confirm("本当に削除しますか？")) { await this.delete_row(rowData) } })
 
     const prevRow = rows[index - 1]
     const isBoundary =
@@ -260,7 +276,7 @@ if (["alig_x0","alig_x1","alig_y0","language","writing_direction","gpos",].inclu
     addButton.className = "btn btn-outline-primary btn-sm"
     addButton.textContent = "行を上に追加"
 
-    addButton.addEventListener("click", () => { this.add_row(index)})
+    addButton.addEventListener("click", async () => { await this.add_row(index)})
 
     addWrapper.appendChild(addButton)
     }
@@ -284,91 +300,127 @@ parseValue(value, column) {
     default: return value
   }
 }
-add_row(insertIndex) {
+async add_row(insertIndex) {
   const table = this.tables[this.currentTableName]
-  const columns = Object.values(table.columnList)
+  const rows = table.dataList
+  const upperRow = insertIndex > 0? rows[insertIndex - 1]?.[1]: null
+  const new_priority = rows[insertIndex]["Priority"] == null ? null : (upperRow == null? rows[insertIndex]["Priority"]-1 : upperRow["Priority"])
+  const new_order = rows[insertIndex]["Order"] == null ? null : (upperRow == null? rows[insertIndex]["Order"]-1 : upperRow["Order"])
 
-  // 現在の表示順で行を取得
-  const rows = Object.entries(table.dataList)
-    .sort(([, a], [, b]) => {
-      return (a.Order ?? a.ID) - (b.Order ?? b.ID)
+  try {
+    const res = await fetch("/thaqqa_api/prefab/data/new", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken
+      },
+      body: JSON.stringify({
+        bundleowner: this.bundleownerTarget.value,
+        bundlename: this.bundlenameTarget.value,
+        font_name: table.global == true ? null : this.fontTarget.value,
+        datatable_name: this.currentTableName,
+        priority: new_priority,
+        order: new_order,
+      })
     })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
 
-    const usedIds = new Set(rows.map(([, row]) => Number(row.ID)))
-    let nextId = 0
-    while (usedIds.has(nextId)) {nextId++}
+    const json = await res.json()
 
-  const newRow = {}
+    
+
+    if (!json.ok) {
+        throw new Error(`更新処理に失敗しました:${json.error}`)
+    }
+    this.parse_json(json,false)
+    this.render(this.tables[this.currentTableName])
+    } catch (error) {
+    console.error(error)
+  }
+
 
   
+}
 
-  for (const column of columns) {
-    switch (column.type) {
-      case "int":
-      case "float":
-        newRow[column.name] = 0
-        break
+async edit_row(rowData) {
+  const id = rowData.ID;
+  const table = this.tables[this.currentTableName]
 
-      case "bool":
-        newRow[column.name] = false
-        break
-
-      default:
-        newRow[column.name] = ""
+  try {
+    const res = await fetch("/thaqqa_api/prefab/data/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken
+      },
+      body: JSON.stringify({
+        bundleowner: this.bundleownerTarget.value,
+        bundlename: this.bundlenameTarget.value,
+        font_name: table.global == true ? null : this.fontTarget.value,
+        datatable_name: this.currentTableName,
+        data_id: id,
+        alter_data: rowData,
+      })
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
     }
-  }
 
+    const json = await res.json()
 
+    
 
-  // ID列を設定
-  const idColumn = columns.find(
-    column => column.subtype === "id"
-  )
-  if (idColumn) {
-    newRow[idColumn.name] = nextId
-  }
-
-  // 直上の行があれば Order / Priority を複製
-  const upperRow = insertIndex > 0
-    ? rows[insertIndex - 1]?.[1]
-    : null
-
-  for (const column of columns) {
-    if (
-      column.name === "Order" ||
-      column.name === "Priority"
-    ) {
-      if (upperRow && upperRow[column.name] != null) {
-        newRow[column.name] = upperRow[column.name]
-      }
+    if (!json.ok) {
+        throw new Error(`更新処理に失敗しました:${json.error}`)
     }
+    this.parse_json(json,false)
+    this.render(this.tables[this.currentTableName])
+    } catch (error) {
+    console.error(error)
   }
-
-  // dataList のキーは既存の最大値 + 1
-  const nextKey = String(
-    Math.max(-1, ...Object.keys(table.dataList).map(Number)) + 1
-  )
-
-  // 表示順の指定位置に挿入
-  rows.splice(insertIndex, 0, [nextKey, newRow])
-
-  // オブジェクトを再構築
-  table.dataList = Object.fromEntries(rows)
 
   this.render(table)
 }
 
-delete_row(id) {
+
+async delete_row(rowData) {
+  const id = rowData.ID;
   const table = this.tables[this.currentTableName]
 
-  const entry = Object.entries(table.dataList).find( ([, row]) => row.ID === id)
+  try {
+    const res = await fetch("/thaqqa_api/prefab/data/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken
+      },
+      body: JSON.stringify({
+        bundleowner: this.bundleownerTarget.value,
+        bundlename: this.bundlenameTarget.value,
+        font_name: table.global == true ? null : this.fontTarget.value,
+        datatable_name: this.currentTableName,
+        data_id: id,
+      })
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
 
-  if (!entry) return
+    const json = await res.json()
 
-  const [key] = entry
-  delete table.dataList[key]
+    
 
-  this.render(table)
+    if (!json.ok) {
+        throw new Error(`更新処理に失敗しました:${json.error}`)
+    }
+    this.parse_json(json,false)
+    this.render(this.tables[this.currentTableName])
+    } catch (error) {
+    console.error(error)
+  }
+
 }
 
 }
